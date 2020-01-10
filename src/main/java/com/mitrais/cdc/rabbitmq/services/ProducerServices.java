@@ -23,16 +23,16 @@ public class ProducerServices {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    public void sendMessage(String payload, String queue) throws IOException, TimeoutException {
+    public void sendMessage(String payload, String exchange, String routingKey) throws IOException, TimeoutException {
         MessageProperties messageProperties = new MessageProperties();
         messageProperties.setCorrelationId(java.util.UUID.randomUUID().toString());
         Message message = new Message(payload.getBytes(), messageProperties);
-        rabbitTemplate.convertAndSend("mitrais2", "link", message);
+        rabbitTemplate.convertAndSend(exchange, routingKey, message);
         log.info("message has been sent...with CorrelationID: {}", message.getMessageProperties().getCorrelationId());
     }
 
-    public void sendPayload(AccountPayload accountPayload){
-        rabbitTemplate.convertAndSend("mitrais3", "link-object", accountPayload);
+    public void sendPayload(AccountPayload accountPayload, String exchange, String routingKey){
+        rabbitTemplate.convertAndSend(exchange, routingKey, accountPayload);
         log.info("payload has been sent...");
     }
 }
